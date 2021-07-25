@@ -1,22 +1,54 @@
 version: '3.3'
 
 services:
-   keycloak:
-     image: jboss/keycloak
-     environment:
-      - KEYCLOAK_USER=root
-      - KEYCLOAK_PASSWORD=root
-     ports:
-      - 8080:8080
-     network_mode: host
 
-   vault:
-     image: vault
-     environment:
-       - VAULT_DEV_ROOT_TOKEN_ID=myroot
-       - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
-     ports:
-       - 8200:8200
-     cap_add:
-       - IPC_LOCK
-     network_mode: host
+  terraform-shell:
+    image: hashicorp/terraform
+    container_name: terraform-shell
+    volumes:
+      - ./terraform:/playground
+    working_dir: /playground
+    entrypoint: /bin/ash
+    tty: true
+    depends_on:
+      - keycloak
+      - vault
+    networks:
+      - keycloak
+
+  keycloak:
+    image: jboss/keycloak
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 15s
+    environment:
+     - KEYCLOAK_USER=root
+     - KEYCLOAK_PASSWORD=root
+    ports:
+     - 8080:8080
+    networks:
+      - keycloak
+
+  vault:
+    image: vault
+    healthcheck:
+      test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8200/ui/vault/auth" ]
+      interval: 5s
+      timeout: 5s
+      retries: 3
+      start_period: 10s
+    environment:
+      - VAULT_DEV_ROOT_TOKEN_ID=myroot
+      - VAULT_DEV_LISTEN_ADDRESS=0.0.0.0:8200
+    ports:
+      - 8200:8200
+    cap_add:
+      - IPC_LOCK
+    networks:
+      - keycloak
+
+networks:
+  keycloak:

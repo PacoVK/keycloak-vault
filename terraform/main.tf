@@ -12,11 +12,6 @@ terraform {
   }
 }
 
-variable "vault_oidc_discovery_url_host" {
-  type = string
-  default = "localhost"
-}
-
 locals {
   // values from docker-compose.yml
   vault_root_token = "myroot"
@@ -25,7 +20,8 @@ locals {
 }
 
 provider "vault" {
-  address = "http://localhost:8200"
+  // see docker-compose.yml
+  address = "http://vault:8200"
   token   = local.vault_root_token
 }
 
@@ -33,5 +29,6 @@ provider "keycloak" {
   client_id = "admin-cli"
   username  = local.keycloak_user
   password  = local.keycloak_password
-  url       = "http://localhost:8080"
+  // see docker-compose.yml
+  url       = "http://keycloak:8080"
 }

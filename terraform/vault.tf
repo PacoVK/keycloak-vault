@@ -11,7 +11,7 @@ resource "vault_jwt_auth_backend" "keycloak" {
   path               = "oidc"
   type               = "oidc"
   default_role       = "default"
-  oidc_discovery_url = format("http://%s:8080/auth/realms/%s", var.vault_oidc_discovery_url_host ,keycloak_realm.realm.id)
+  oidc_discovery_url = format("http://keycloak:8080/auth/realms/%s" ,keycloak_realm.realm.id)
   oidc_client_id     = keycloak_openid_client.openid_client.client_id
   oidc_client_secret = keycloak_openid_client.openid_client.client_secret
 
