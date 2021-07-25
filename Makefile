@@ -1,6 +1,6 @@
 # USAGE
 define USAGE
-Usage: make [help | up | down | init | provision | deprovision | destroy]
+Usage: make [help | up | down | init | provision | deprovision | destroy | shell]
 endef
 export USAGE
 
@@ -9,27 +9,25 @@ UNAME := $(shell uname -s)
 .PHONY:
 help:
 	@echo "$$USAGE"
+
 up:
-ifeq ($(UNAME),Darwin)
-	docker-compose -f docker-compose-mac.yml up -d $(c)
-else
 	docker-compose -f docker-compose.yml up -d $(c)
-endif
+
 down:
-ifeq ($(UNAME),Darwin)
-	docker-compose -f docker-compose-mac.yml down $(c)
-else
 	docker-compose -f docker-compose.yml down $(c)
-endif
+
 init:
-	cd ${TF_DIR} && terraform init
+	docker exec terraform-shell terraform init
+
 provision:
-ifeq ($(UNAME),Darwin)
-	cd ${TF_DIR} && terraform apply -var 'vault_oidc_discovery_url_host=keycloak' --auto-approve
-else
-	cd ${TF_DIR} && terraform apply --auto-approve
-endif
+	docker exec terraform-shell terraform apply --auto-approve
+
 deprovision:
-	cd ${TF_DIR} && terraform destroy --auto-approve
+	docker exec terraform-shell terraform destroy --auto-approve
+
 destroy:
-	cd ${TF_DIR} && terraform destroy --auto-approve && rm -rf *.terraform *.hcl *.tfstate *.backup
+	docker exec terraform-shell terraform destroy --auto-approve
+	cd ${TF_DIR} && rm -rf *.terraform *.hcl *.tfstate *.backup
+
+shell:
+	docker exec -it terraform-shell ash
