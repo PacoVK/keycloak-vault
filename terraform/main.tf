@@ -4,10 +4,11 @@ terraform {
   required_providers {
     vault = {
       source = "hashicorp/vault"
+      version = ">= 3.0.0"
     }
     keycloak = {
       source  = "mrparkers/keycloak"
-      version = ">= 2.0.0"
+      version = ">= 3.0.0"
     }
   }
 }
@@ -29,6 +30,7 @@ provider "keycloak" {
   client_id = "admin-cli"
   username  = local.keycloak_user
   password  = local.keycloak_password
+  base_path = ""
   // see docker-compose.yml
   url       = "http://keycloak:8080"
 }

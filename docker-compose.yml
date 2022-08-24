@@ -17,16 +17,18 @@ services:
       - keycloak
 
   keycloak:
-    image: jboss/keycloak
+    image: quay.io/keycloak/keycloak
     healthcheck:
       test: [ "CMD", "curl", "-f", "http://localhost:8080" ]
       interval: 5s
       timeout: 5s
       retries: 3
-      start_period: 15s
+      start_period: 5s
+    command:
+      - start-dev
     environment:
-     - KEYCLOAK_USER=root
-     - KEYCLOAK_PASSWORD=root
+     - KEYCLOAK_ADMIN=root
+     - KEYCLOAK_ADMIN_PASSWORD=root
     ports:
      - 8080:8080
     networks:
