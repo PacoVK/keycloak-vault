@@ -35,7 +35,7 @@ services:
       - keycloak
 
   vault:
-    image: vault
+    image: hashicorp/vault
     healthcheck:
       test: [ "CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost:8200/ui/vault/auth" ]
       interval: 5s
