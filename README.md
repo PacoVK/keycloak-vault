@@ -6,12 +6,38 @@ The project refers to a [medium post on this topic](https://pascal-euhus.medium.
 **This version is compatible with Quarkus, for Keyloak on Wildfly see [here](https://github.com/PacoVK/keycloak-vault/releases/tag/legacy-wildfly)**
 
 ## Prerequisite
-You need to set the following entry in ``/etc/hosts``
+
+### Keycloak frontend name resolution
+
+You need to set the following entry in ``/etc/hosts`` or `C:\Windows\System32\drivers\etc\hosts`. 
 ```text
 127.0.0.1 keycloak
 ```
 
+This change should be done on the operating system that the end-user's browser is running on (when using WSL the change needs to be done on windows system). 
+
+The keycloak name resolution for the backend (vault->keycloak) is done through the docker service name.
+
+### Make
+
+Install make. Ex for debian-like systems:
+
+```
+sudo apt install make
+```
+
+Alternatively check the `Makefile` and manually run the commands. 
+
+For example to run the stack in the foreground and display all logs in the standard output, instead of `make up` you can use:
+
+```
+docker-compose up
+```
+
+
+
 ## Usage
+
 Use makefile: <br/>
 ```make [help | up | down | init | provision | deprovision | destroy | shell]```
 
